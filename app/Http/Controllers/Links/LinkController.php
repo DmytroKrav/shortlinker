@@ -26,14 +26,25 @@ class LinkController extends Controller
             'creator_ip' => $request->ip()
         ];
 
-        $newShortLink = $this->linkService->create($requestParams);
+        try {
+            $result = $this->linkService->create($requestParams);
 
-        if ($newShortLink) {
-            return response()->json([
-                'link' => $newShortLink->link,
-                'params' => $newShortLink->params ? '?' . $newShortLink->params : '',
-                'shortLink' => url('/r', ['code' => $newShortLink->code])
-            ]);
+            $response = [
+                'link' => $result->link,
+                'params' => $result->params ? '?' . $result->params : '',
+                'shortLink' => url('/r', ['code' => $result->code])
+            ];
+
+            return response()->json($response);
+
+        } catch (\Illuminate\Database\QueryException $exception) {
+            $response = [
+                'errors' => [
+                    'link' => ['Something went wrong, please try again later']
+                ]
+            ];
+
+            return response()->json($response, 500);
         }
     }
 

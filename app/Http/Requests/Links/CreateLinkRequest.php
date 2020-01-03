@@ -17,5 +17,4 @@ class CreateLinkRequest extends FormRequest
             'link' => ['url', 'required', app(AvailableDomain::class), app(OperationTimeLimit::class)],
         ];
     }
-
 }
