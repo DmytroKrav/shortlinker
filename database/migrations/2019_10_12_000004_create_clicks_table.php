@@ -15,7 +15,7 @@ class CreateClicksTable extends Migration
     {
         Schema::create('clicks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('clicked_link');
+            $table->unsignedInteger('shorted_links_id');
             $table->string('datetime');
             $table->string('user_agent');
             $table->string('clicker_ip');
@@ -24,6 +24,10 @@ class CreateClicksTable extends Migration
             $table->string('clicker_city');
             $table->integer('updated_at');
             $table->integer('created_at');
+
+            $table->foreign('shorted_links_id')
+                ->references('id')->on('shorted_links')
+                ->onDelete('cascade');
         });
     }
 

@@ -8,14 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @property $link string
- * @property $code string
- * @property $params array
  */
 class CreateLinkRequest extends FormRequest
 {
-    public $code;
-    public $params;
-
     public function rules()
     {
         return [

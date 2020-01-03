@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class Clicks extends Model
 {
     protected $fillable = [
-        'clicker_ip', 'referrer', 'user_agent', 'datetime', 'clicker_city', 'is_unique'
+        'clicker_ip', 'referrer', 'user_agent', 'datetime', 'clicker_city', 'is_unique', 'shorted_links_id'
     ];
 
     public function getDateFormat() : string

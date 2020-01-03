@@ -29,17 +29,22 @@ $(function() {
     }
 
     function hideErrors() {
-        var elements = $("[id$='error']");
-        $.each(elements, function() {
+        var errors = $("[id$='error']");
+        $.each(errors, function(key, value) {
             $(this).hide();
+        });
+        var invalidFields = $('.is-invalid');
+        console.log(invalidFields);
+        $.each(invalidFields, function(key, value) {
+            $(this).removeClass('is-invalid');
         });
     }
 
     function listLinks(data) {
         $('#linksList').append(
             '<li class="list-group-item">' + data.link + data.params
-            + ' -> ' + '<a target="_blank" href="' + data.shortLink + data.params
-            + '">' + data.shortLink + data.params + '</a>'
+            + ' -> ' + '<a target="_blank" href="' + data.shortLink
+            + '">' + data.shortLink + '</a>'
             + '</li>'
         )
     }

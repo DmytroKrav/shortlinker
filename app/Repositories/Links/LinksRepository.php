@@ -13,19 +13,19 @@ class LinksRepository extends BaseRepository
         $this->model = $links;
     }
 
-    public function create(CreateLinkRequest $request)
+    public function create(array $request) : ShortedLinks
     {
         $model = $this->model->create([
-            'creator_ip' => $request->ip(),
-            'code' => $request->code,
-            'link' => $request->link,
-            'params' => $request->params
+            'creator_ip' => $request['creator_ip'],
+            'code' => $request['code'],
+            'link' => $request['link'],
+            'params' => $request['params']
         ]);
 
         return $model;
     }
 
-    public function getAllShortLinkFromIpByLastTime(string $ip, $timeLimit)
+    public function getAllShortLinkFromIpByLastTime(string $ip, $timeLimit) : array
     {
         return $this->model
             ->where('creator_ip', '=', $ip)
@@ -34,7 +34,7 @@ class LinksRepository extends BaseRepository
             ->toArray();
     }
 
-    public function getOneByCode(string $code):? ShortedLinks
+    public function getOneByCodeOrFail(string $code): ShortedLinks
     {
         return $this->model->where('code', '=', $code)->firstOrFail();
     }

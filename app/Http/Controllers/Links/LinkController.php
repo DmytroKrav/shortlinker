@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Links;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Links\ClickLinkRequest;
 use App\Http\Requests\Links\CreateLinkRequest;
 use App\Services\Links\LinkService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LinkController extends Controller
@@ -19,20 +19,37 @@ class LinkController extends Controller
 
     public function createLink(CreateLinkRequest $request)
     {
-        $newShortLink = $this->linkService->create($request);
+        $requestParams = [
+            'code' => md5(time()),
+            'params' => parse_url($request->link, PHP_URL_QUERY),
+            'link' => strtok($request->link, '?'),
+            'creator_ip' => $request->ip()
+        ];
+
+        $newShortLink = $this->linkService->create($requestParams);
+
         if ($newShortLink) {
             return response()->json([
                 'link' => $newShortLink->link,
-                'params' => '?' . $newShortLink->params,
+                'params' => $newShortLink->params ? '?' . $newShortLink->params : '',
                 'shortLink' => url('/r', ['code' => $newShortLink->code])
             ]);
         }
     }
 
-    public function performRedirect(ClickLinkRequest $request, string $code) : string
+    public function performRedirect(Request $request, string $code) : string
     {
         $linkModel = $this->linkService->getRedirect($code);
-        $note = $this->linkService->noteClick($request);
+
+        $requestParams = [
+            'clicker_ip' => $request->ip(),
+            'datetime' => Carbon::now(),
+            'city' => geoip($request->ip())['city'],
+            'referrer' => $request->header('Referer'),
+            'user_agent' => $request->header('User-Agent')
+        ];
+
+        $note = $this->linkService->noteClick($requestParams, $linkModel);
 
         $redirectUrl = $this->linkService->createRedirectLink($linkModel, $request->all());
 
